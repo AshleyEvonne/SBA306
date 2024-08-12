@@ -25,27 +25,76 @@ import java.util.Set;
 @Entity
 @Table (name = "course")
 public class Course {
-    @Column(name= "id", unique = true)
-    @Id private int id;
-    @Column(name = "name",length = 50, nullable = false)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
+
+    @Column(name = "name", length = 50, nullable = false)
     private String name;
+
     @Column(name = "instructor", length = 50, nullable = false)
     private String instructor;
-    @Column(name = "students")
-    private Set<Student> students;
 
-    @Override
-    public void createCourse(Course course) {
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REMOVE,
+            CascadeType.PERSIST })
+    @JoinTable(name = "students_courses", joinColumns = @JoinColumn(name = "courses_id"), inverseJoinColumns = @JoinColumn(name = "student_email"))
+    private Set<Student> students = new HashSet<>();
+
+    // no args constructor
+
+    Course() {
 
     }
 
-    @Override
-    public Course getCourseById(int courseId) {
-        return null;
+    // all args constructor
+
+    Course(String name, String instructor, Set<Student> students) {
+        this.name = name;
+        this.instructor = instructor;
+        this.students = students;
+
     }
 
-    @Override
-    public List<Course> getAllCourses() {
-        return List.of();
+    // required args constructor
+    public Course(String name, String instructor) {
+        this.name = name;
+        this.instructor = instructor;
+
     }
+
+    // GETTERS AND SETTER
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getInstructor() {
+        return this.instructor;
+    }
+
+    public void setInstructor(String instructor) {
+        this.instructor = instructor;
+    }
+
+    public Set<Student> getStudents() {
+        return this.students;
+    }
+
+    public void setStudents(Set<Student> students) {
+        this.students = students;
+    }
+
 }
